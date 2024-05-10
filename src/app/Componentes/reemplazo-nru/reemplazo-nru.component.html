@@ -1,1 +1,139 @@
-<p>reemplazo-nru works!</p>
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <h2>Simulador de Paginación de Memoria Virtual</h2>
+            <h2>Algoritmo de Reemplazo FIFO</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm classWithPad">
+            <form [formGroup]="configuracionSistemaForm">
+                <div class="form-group row classWithPad">
+                    <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño de Memoria Principal [MB]</label>
+                    <div class="col-sm-6">
+                        <input type="number" formControlName="tamanioMemoriaPrincipal">
+                    </div>
+                </div>
+                <div class="form-group row classWithPad">
+                    <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño de Memoria Secundaria [MB]</label>
+                    <div class="col-sm-6">
+                        <input type="number" formControlName="tamanioMemoriaSecundaria">
+                    </div>
+                </div>
+                <div class="form-group row classWithPad">
+                    <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño de Páginas [MB]</label>
+                    <div class="col-sm-6">
+                        <input type="number" formControlName="tamanioPaginas">
+                    </div>
+                </div>
+                <button type="button" (click)="iniciarSistema()" class="btn btn-secondary classWithPad"
+                    style="width: 100%;">Iniciar Sistema</button>
+            </form>
+        </div>
+        <div class="col-sm classWithPad">
+            <form [formGroup]="agregarProcesoForm">
+                <div class="form-group row classWithPad">
+                    <label for="inputPassword" class="col-sm-6 col-form-label">Nombre del Proceso</label>
+                    <div class="col-sm-6">
+                        <input type="text" formControlName="nombreProceso">
+                    </div>
+                </div>
+                <div class="form-group row classWithPad">
+                    <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño del Proceso [MB]</label>
+                    <div class="col-sm-6">
+                        <input type="number" formControlName="tamanioProceso" readonly>
+                    </div>
+                </div>
+                <button type="button" (click)="agregarProcesoNRU()" class="btn btn-success classWithPad"
+                    style="width: 100%;" [disabled]="!sistemaIniciado">Agregar Proceso</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="row">
+            <div class="col-sm classWithPad">
+                <h4>Lista de Procesos</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Tamaño [MB]</th>
+                            <th scope="col">#Paginas</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Paginas MP</th>
+                            <th scope="col">Paginas MS</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of listaProcesos">
+                            <th scope="row">{{item.id}}</th>
+                            <td>{{item.nombreProceso}}</td>
+                            <td>{{item.tamanioProceso}}</td>
+                            <td>{{item.numeroPaginas}}</td>
+                            <td>{{item.estado}}</td>
+                            <td>{{item.mP}}</td>
+                            <td>{{item.mS}}</td>
+                            <td> <button type="button" (click)="cargarAMemoriaPrincipal(item.id, item.nombreProceso)"
+                                    class="btn btn-warning" *ngIf="item.estado != 'Terminado'">Cargar
+                                    MP</button>&nbsp;&nbsp;<button type="button" class="btn btn-danger"
+                                    (click)="terminarProceso(item.id)"
+                                    *ngIf="item.estado != 'Terminado'">Terminar</button>&nbsp;&nbsp;<button
+                                    type="button" class="btn btn-secondary"
+                                    *ngIf="item.estado != 'Terminado'" (click)="bloquearProceso(item.id)">Bloquear</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm classWithPad">
+            <h4>Memoria Principal</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Dirección Fisica</th>
+                        <th scope="col"># Marco</th>
+                        <th scope="col">ID Proceso</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col"># Pagina</th>
+                        <th scope="col">Tiempo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of marcosMemoriaPrincipal">
+                        <th scope="row">{{item.direccionFisica}}</th>
+                        <td>{{item.numeroMarco}}</td>
+                        <td>{{item.idProceso}}</td>
+                        <td>{{item.nombreProceso}}</td>
+                        <td>{{item.numeroPagina}}</td>
+                        <td>{{item.tiempoOcupadoProceso}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm classWithPad">
+            <h4>Memoria Secundaria</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col"># Almacenamiento</th>
+                        <th scope="col">ID Proceso</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col"># Pagina</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of paginasMemoriaSecundaria">
+                        <th scope="row">{{item.numeroAlmacenamiento}}</th>
+                        <td>{{item.idProceso}}</td>
+                        <td>{{item.nombreProceso}}</td>
+                        <td>{{item.numeroPagina}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
