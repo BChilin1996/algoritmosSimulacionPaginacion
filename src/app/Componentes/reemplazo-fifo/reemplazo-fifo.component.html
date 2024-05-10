@@ -10,19 +10,19 @@
         <div class="col-sm classWithPad">
             <form [formGroup]="configuracionSistemaForm">
                 <div class="form-group row classWithPad">
-                    <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño de Memoria Principal</label>
+                    <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño de Memoria Principal [MB]</label>
                     <div class="col-sm-6">
                         <input type="number" formControlName="tamanioMemoriaPrincipal">
                     </div>
                 </div>
                 <div class="form-group row classWithPad">
-                    <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño de Memoria Secundaria</label>
+                    <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño de Memoria Secundaria [MB]</label>
                     <div class="col-sm-6">
                         <input type="number" formControlName="tamanioMemoriaSecundaria">
                     </div>
                 </div>
                 <div class="form-group row classWithPad">
-                    <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño de Páginas</label>
+                    <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño de Páginas [MB]</label>
                     <div class="col-sm-6">
                         <input type="number" formControlName="tamanioPaginas">
                     </div>
@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <div class="form-group row classWithPad">
-                    <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño del Proceso</label>
+                    <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño del Proceso [MB]</label>
                     <div class="col-sm-6">
                         <input type="number" formControlName="tamanioProceso">
                     </div>
@@ -62,8 +62,9 @@
                             <th scope="col">Tamaño [MB]</th>
                             <th scope="col">#Paginas</th>
                             <th scope="col">Estado</th>
-                            <th scope="col">MP</th>
-                            <th scope="col">MS</th>
+                            <th scope="col">Paginas MP</th>
+                            <th scope="col">Paginas MS</th>
+                            <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,6 +76,11 @@
                             <td>{{item.estado}}</td>
                             <td>{{item.mP}}</td>
                             <td>{{item.mS}}</td>
+                            <td> <button type="button" (click)="cargarAMemoriaPrincipal(item.id, item.nombreProceso)"
+                                    class="btn btn-warning">Cargar
+                                    MP</button>&nbsp;&nbsp;<button type="button"
+                                    class="btn btn-danger">Terminar</button>&nbsp;&nbsp;<button type="button"
+                                    class="btn btn-secondary">Bloquear</button></td>
                         </tr>
                     </tbody>
                 </table>
