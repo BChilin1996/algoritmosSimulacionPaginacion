@@ -82,7 +82,7 @@
                                     (click)="terminarProceso(item.id)"
                                     *ngIf="item.estado != 'Terminado'">Terminar</button>&nbsp;&nbsp;<button
                                     type="button" class="btn btn-secondary"
-                                    *ngIf="item.estado != 'Terminado'">Bloquear</button></td>
+                                    *ngIf="item.estado != 'Terminado'" (click)="bloquearProceso(item.id)">Bloquear</button></td>
                         </tr>
                     </tbody>
                 </table>

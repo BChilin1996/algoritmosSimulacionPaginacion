@@ -72,6 +72,52 @@ export class ReemplazoFIFOComponent {
 
   }
 
+
+  bloquearProceso(idProcesoBloquear: Number) {
+    let marcoMPABloquear = this.marcosMemoriaPrincipal.filter((marco: any) => marco.idProceso === idProcesoBloquear);
+  
+    if (marcoMPABloquear.length > 0) {
+      
+      for (let i = 0; i < marcoMPABloquear.length; i++) {
+        let indice = Number(marcoMPABloquear[i].numeroMarco) - 1;
+        this.marcosMemoriaPrincipal[indice].idProceso = null;
+        this.marcosMemoriaPrincipal[indice].nombreProceso = null;
+        this.marcosMemoriaPrincipal[indice].numeroPagina = null;
+      }
+
+      let datosProceso = this.listaProcesos.find((option: any) => option.id === idProcesoBloquear);
+
+      let numeroPaginas = Math.ceil(datosProceso.tamanioProceso / this.tamanioPaginas);
+      let cantidadPaginasAsignados = 0;
+
+      let paginasMemoriaSecundaria = this.paginasMemoriaSecundaria.filter((marco: any) => marco.idProceso === null);
+
+
+      for (let i = 0; i < paginasMemoriaSecundaria.length; i++) {
+
+        let indice = Number(paginasMemoriaSecundaria[i].numeroAlmacenamiento) - 1;
+
+        this.paginasMemoriaSecundaria[indice].idProceso = datosProceso.id;
+        this.paginasMemoriaSecundaria[indice].nombreProceso = datosProceso.nombreProceso;
+        this.paginasMemoriaSecundaria[indice].numeroPagina = cantidadPaginasAsignados;
+        cantidadPaginasAsignados = cantidadPaginasAsignados + 1;
+
+        if (cantidadPaginasAsignados >= numeroPaginas) {
+          break;
+        }
+
+      }
+
+      this.listaProcesos[Number(idProcesoBloquear) - 1].estado = "Bloqueado";
+      this.listaProcesos[Number(idProcesoBloquear) - 1].Ms = 0;
+      this.listaProcesos[Number(idProcesoBloquear) - 1].Mp = 0;
+
+    } else {
+      this.listaProcesos[Number(idProcesoBloquear) - 1].estado = "Bloqueado";
+    }
+
+  }
+
   terminarProceso(idProcesoEliminar: Number) {
     let marcoMPAEliminar = this.marcosMemoriaPrincipal.filter((marco: any) => marco.idProceso === idProcesoEliminar);
     let paginasMSEliminar = this.paginasMemoriaSecundaria.filter((pagina: any) => pagina.idProceso === idProcesoEliminar);
@@ -84,7 +130,7 @@ export class ReemplazoFIFOComponent {
     }
 
 
-    console.log("Eliminar Memoria Secundaria "+ paginasMSEliminar);
+    console.log("Eliminar Memoria Secundaria " + paginasMSEliminar);
 
     for (let i = 0; i < paginasMSEliminar.length; i++) {
       let indice = Number(paginasMSEliminar[i].numeroAlmacenamiento) - 1;
@@ -109,7 +155,7 @@ export class ReemplazoFIFOComponent {
       alert("Proceso no se encuentra en la Memoria Principal, Fallo de Pagina");
 
       //Aplicar algoritmo FIFO
-      console.log("Proceso Lista "+ this.ordenLlegadaMemoriaPrincipal);
+      console.log("Proceso Lista " + this.ordenLlegadaMemoriaPrincipal);
       let primerProcesoLista = this.ordenLlegadaMemoriaPrincipal[0];
       const procesoMarcoLiberar = this.marcosMemoriaPrincipal.find((option: any) => option.idProceso === primerProcesoLista);
 
