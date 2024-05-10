@@ -77,9 +77,9 @@
                             <td>{{item.mP}}</td>
                             <td>{{item.mS}}</td>
                             <td> <button type="button" (click)="cargarAMemoriaPrincipal(item.id, item.nombreProceso)"
-                                    class="btn btn-warning">Cargar
+                                    class="btn btn-warning" *ngIf="item.estado != 'Terminado'">Cargar
                                     MP</button>&nbsp;&nbsp;<button type="button"
-                                    class="btn btn-danger">Terminar</button>&nbsp;&nbsp;<button type="button"
+                                    class="btn btn-danger" (click)="terminarProceso(item.id)">Terminar</button>&nbsp;&nbsp;<button type="button"
                                     class="btn btn-secondary">Bloquear</button></td>
                         </tr>
                     </tbody>

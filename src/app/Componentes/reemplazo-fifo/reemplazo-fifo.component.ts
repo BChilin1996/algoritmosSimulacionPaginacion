@@ -1,11 +1,11 @@
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-reemplazo-fifo',
   standalone: true,
-  imports: [ReactiveFormsModule, NgFor],
+  imports: [ReactiveFormsModule, NgFor, NgIf],
   templateUrl: './reemplazo-fifo.component.html',
   styleUrl: './reemplazo-fifo.component.css'
 })
@@ -72,6 +72,29 @@ export class ReemplazoFIFOComponent {
 
   }
 
+  terminarProceso(idProcesoEliminar: Number) {
+    let marcoMPAEliminar = this.marcosMemoriaPrincipal.filter((marco: any) => marco.idProceso === idProcesoEliminar);
+    let paginasMSEliminar = this.paginasMemoriaSecundaria.filter((marco: any) => marco.idProceso === idProcesoEliminar);
+
+    for (let i = 0; i < marcoMPAEliminar.length; i++) {
+      let indice = Number(marcoMPAEliminar[i].numeroMarco) - 1;
+      this.marcosMemoriaPrincipal[indice].idProceso = null;
+      this.marcosMemoriaPrincipal[indice].nombreProceso = null;
+    }
+
+
+    for (let i = 0; i < paginasMSEliminar.length; i++) {
+      let indice = Number(paginasMSEliminar[i].numeroPagina) - 1;
+      this.paginasMemoriaSecundaria[indice].idProceso = null;
+      this.paginasMemoriaSecundaria[indice].nombreProceso = null;
+    }
+
+    this.listaProcesos[Number(idProcesoEliminar) - 1].estado = "Terminado";
+    this.listaProcesos[Number(idProcesoEliminar) - 1].Ms = 0;
+    this.listaProcesos[Number(idProcesoEliminar) - 1].Mp = 0;
+
+  }
+
   cargarAMemoriaPrincipal(idProcesoReemplazar: Number, nombreProcesoReemplazar: String) {
     const falloPagina = this.marcosMemoriaPrincipal.find((option: any) => option.idProceso === idProcesoReemplazar);
 
@@ -83,56 +106,86 @@ export class ReemplazoFIFOComponent {
       //Aplicar algoritmo FIFO
       const procesoMarcoLiberar = this.marcosMemoriaPrincipal.find((option: any) => option.numeroMarco === this.ultimoMarcoFalloDePagina);
 
-      let marcoMPALiberar = this.marcosMemoriaPrincipal.filter((marco: any) => marco.idProceso === procesoMarcoLiberar.idProceso);
-      let procesoTrasladarMemoriaSecundaria = marcoMPALiberar[0].idProceso;
+      //Paginas necesarias para el nuevo Proceso
+      let datosProcesoReemplazar = this.listaProcesos.find((option: any) => option.id === idProcesoReemplazar);
 
-      console.log("Proceso a Liberar " + JSON.stringify(marcoMPALiberar));
+      let paginasReemplazar = Math.ceil(datosProcesoReemplazar.tamanioProceso / this.tamanioPaginas);
+      let marcosLibres = this.marcosMemoriaPrincipal.filter((marco: any) => marco.idProceso === null);
+      console.log("Marcos Libres " + marcosLibres.length);
+      console.log("Paginas a Reemplazar " + paginasReemplazar);
 
-      //Liberar los Espacios de Memoria Principal
-      for (let i = 0; i < marcoMPALiberar.length; i++) {
-        let indice = Number(marcoMPALiberar[i].numeroMarco) - 1;
-        this.marcosMemoriaPrincipal[indice].idProceso = idProcesoReemplazar;
-        this.marcosMemoriaPrincipal[indice].nombreProceso = nombreProcesoReemplazar;
-        this.ultimoMarcoFalloDePagina = marcoMPALiberar[i].numeroMarco + 1;
-      }
+      if (marcosLibres.length >= paginasReemplazar) {
+        console.log("Hay Marcos Libres");
 
-      //Liberar los espacios de Memoria Secundaria
-      let paginasEliminar = this.paginasMemoriaSecundaria.filter((option: any) => option.idProceso === idProcesoReemplazar);
-
-      for (let i = 0; i < paginasEliminar.length; i++) {
-        let indice = Number(paginasEliminar[i].numeroAlmacenamiento) - 1;
-        this.paginasMemoriaSecundaria[indice].idProceso = null;
-        this.paginasMemoriaSecundaria[indice].nombreProceso = null;
-        this.paginasMemoriaSecundaria[indice].numeroPagina = null;
-      }
-
-      //Pasar el proceso a memoria secundaria
-      const procesoTamanio = this.listaProcesos.find((option: any) => option.id === procesoTrasladarMemoriaSecundaria);
-
-      var cantidadPaginasAsignados = 0;
-      console.log("Tamaño MS " + procesoTamanio.tamanioProceso);
-      let numeroPaginas = Math.ceil(procesoTamanio.tamanioProceso / this.tamanioPaginas);
-
-      for (let j = 0; j < this.paginasMemoriaSecundaria.length; j++) {
-
-        if (this.paginasMemoriaSecundaria[j].idProceso === null) {
-          this.paginasMemoriaSecundaria[j].nombreProceso = procesoTamanio.nombreProceso;
-          this.paginasMemoriaSecundaria[j].numeroPagina = cantidadPaginasAsignados;
-          this.paginasMemoriaSecundaria[j].idProceso = procesoTamanio.id;
-          cantidadPaginasAsignados = cantidadPaginasAsignados + 1;
+        for (let i = 0; i < marcosLibres.length; i++) {
+          let indice = Number(marcosLibres[i].numeroMarco) - 1;
+          this.marcosMemoriaPrincipal[indice].idProceso = idProcesoReemplazar;
+          this.marcosMemoriaPrincipal[indice].nombreProceso = nombreProcesoReemplazar;
         }
 
-        if (cantidadPaginasAsignados >= numeroPaginas) {
-          break;
+        //Liberar los espacios de Memoria Secundaria
+        let paginasEliminar = this.paginasMemoriaSecundaria.filter((option: any) => option.idProceso === idProcesoReemplazar);
+
+        for (let i = 0; i < paginasEliminar.length; i++) {
+          let indice = Number(paginasEliminar[i].numeroAlmacenamiento) - 1;
+          this.paginasMemoriaSecundaria[indice].idProceso = null;
+          this.paginasMemoriaSecundaria[indice].nombreProceso = null;
+          this.paginasMemoriaSecundaria[indice].numeroPagina = null;
         }
 
+      } else {
+        console.log("No hay marcos libres, liberar memoria principal");
+
+        //Liberar los Espacios de Memoria Principal
+        let marcoMPALiberar = this.marcosMemoriaPrincipal.filter((marco: any) => marco.idProceso === procesoMarcoLiberar.idProceso);
+        let procesoTrasladarMemoriaSecundaria = marcoMPALiberar[0].idProceso;
+
+        for (let i = 0; i < marcoMPALiberar.length; i++) {
+          let indice = Number(marcoMPALiberar[i].numeroMarco) - 1;
+          this.marcosMemoriaPrincipal[indice].idProceso = idProcesoReemplazar;
+          this.marcosMemoriaPrincipal[indice].nombreProceso = nombreProcesoReemplazar;
+          this.ultimoMarcoFalloDePagina = marcoMPALiberar[i].numeroMarco + 1;
+        }
+
+        //Liberar los espacios de Memoria Secundaria
+        let paginasEliminar = this.paginasMemoriaSecundaria.filter((option: any) => option.idProceso === idProcesoReemplazar);
+
+        for (let i = 0; i < paginasEliminar.length; i++) {
+          let indice = Number(paginasEliminar[i].numeroAlmacenamiento) - 1;
+          this.paginasMemoriaSecundaria[indice].idProceso = null;
+          this.paginasMemoriaSecundaria[indice].nombreProceso = null;
+          this.paginasMemoriaSecundaria[indice].numeroPagina = null;
+        }
+
+        //Pasar el proceso a memoria secundaria
+        const procesoTamanio = this.listaProcesos.find((option: any) => option.id === procesoTrasladarMemoriaSecundaria);
+
+        var cantidadPaginasAsignados = 0;
+        console.log("Tamaño MS " + procesoTamanio.tamanioProceso);
+        let numeroPaginas = Math.ceil(procesoTamanio.tamanioProceso / this.tamanioPaginas);
+
+        for (let j = 0; j < this.paginasMemoriaSecundaria.length; j++) {
+
+          if (this.paginasMemoriaSecundaria[j].idProceso === null) {
+            this.paginasMemoriaSecundaria[j].nombreProceso = procesoTamanio.nombreProceso;
+            this.paginasMemoriaSecundaria[j].numeroPagina = cantidadPaginasAsignados;
+            this.paginasMemoriaSecundaria[j].idProceso = procesoTamanio.id;
+            cantidadPaginasAsignados = cantidadPaginasAsignados + 1;
+          }
+
+          if (cantidadPaginasAsignados >= numeroPaginas) {
+            break;
+          }
+
+        }
+
+        this.listaProcesos[procesoTrasladarMemoriaSecundaria - 1].mS = cantidadPaginasAsignados;
+        this.listaProcesos[procesoTrasladarMemoriaSecundaria - 1].mP = 0;
+
+        this.listaProcesos[Number(idProcesoReemplazar) - 1].mS = 0;
+        this.listaProcesos[Number(idProcesoReemplazar) - 1].mP = cantidadPaginasAsignados;
+
       }
-
-      this.listaProcesos[procesoTrasladarMemoriaSecundaria - 1].mS = cantidadPaginasAsignados;
-      this.listaProcesos[procesoTrasladarMemoriaSecundaria - 1].mP = 0;
-
-      this.listaProcesos[Number(idProcesoReemplazar) - 1].mS = 0;
-      this.listaProcesos[Number(idProcesoReemplazar) - 1].mP = cantidadPaginasAsignados;
 
     }
 
