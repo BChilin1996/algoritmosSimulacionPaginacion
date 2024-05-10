@@ -1,0 +1,101 @@
+
+
+html {
+    background-color: #1a1a1a;
+    overflow: hidden;
+  }
+  
+  .middle {
+    width: 100%;
+    text-align: center;
+    h1 {
+      color: #ffff;
+    }
+    input[type="radio"] {
+      display: none;
+      &:checked {
+        + .box {
+          background-color: #273746;
+          span {
+            color: white;
+            transform: translateY(70px);
+            &:before {
+              transform: translateY(0px);
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+    .box {
+      margin: 15px;
+      width: 300px;
+      height: 200px;
+      background-color: #ffff;
+      transition: all 250ms ease;
+      will-change: transition;
+      display: inline-block;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      font-family: #ffff;
+      font-weight: 900;
+      &:active {
+        transform: translateY(10px);
+      }
+      span {
+        position: absolute;
+        transform: translate(0, 60px);
+        left: 0;
+        right: 0;
+        padding-left:20px ;
+        padding-right: 20px;
+        transition: all 300ms ease;
+        font-size: 1.5em;
+        user-select: none;
+        color: #273746;;
+        &:before {
+          font-size: 1.2em;
+          font-family: FontAwesome;
+          display: block;
+          transform: translateY(-80px);
+          opacity: 0;
+          transition: all 300ms ease-in-out;
+          font-weight: normal;
+          color: white;
+        }
+      }
+    }
+    .front-end {
+      span {
+        &:before {
+          content: "\f121";
+        }
+      }
+    }
+    .back-end {
+      span {
+        &:before {
+          content: "\f0f4";
+        }
+      }
+    }
+  
+    /* Made by */
+    p {
+      color: #ffff;
+      font-weight: 400;
+      a {
+        text-decoration: underline;
+        font-weight: bold;
+        color: #fff;
+      }
+      span {
+        &:after {
+          content: "\f0e7";
+          font-family: FontAwesome;
+          color: yellow;
+        }
+      }
+    }
+  }

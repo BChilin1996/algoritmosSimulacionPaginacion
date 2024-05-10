@@ -3,20 +3,24 @@ import { ReemplazoFIFOComponent } from './Componentes/reemplazo-fifo/reemplazo-f
 import { ReemplazoNRUComponent } from './Componentes/reemplazo-nru/reemplazo-nru.component';
 import { ReemplazoSegundaOportunidadComponent } from './Componentes/reemplazo-segunda-oportunidad/reemplazo-segunda-oportunidad.component';
 import { NgModule } from '@angular/core';
+import { HomeAlgoritmosComponent } from './Componentes/home-algoritmos/home-algoritmos.component';
 
 export const routes: Routes = [{
     path: 'fifo',
     component: ReemplazoFIFOComponent,
   },{
-    path: 'nru',
+    path: 'lru',
     component: ReemplazoNRUComponent,
   },{
     path: 'segunda-oportunidad',
     component: ReemplazoSegundaOportunidadComponent,
   },{
+    path: 'home',
+    component: HomeAlgoritmosComponent,
+  },{
     path: '',
     pathMatch: 'full',
-    redirectTo: 'fifo',
+    redirectTo: 'home',
   }];
 
   @NgModule({
