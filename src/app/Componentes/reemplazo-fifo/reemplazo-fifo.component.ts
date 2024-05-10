@@ -74,7 +74,7 @@ export class ReemplazoFIFOComponent {
 
   terminarProceso(idProcesoEliminar: Number) {
     let marcoMPAEliminar = this.marcosMemoriaPrincipal.filter((marco: any) => marco.idProceso === idProcesoEliminar);
-    let paginasMSEliminar = this.paginasMemoriaSecundaria.filter((marco: any) => marco.idProceso === idProcesoEliminar);
+    let paginasMSEliminar = this.paginasMemoriaSecundaria.filter((pagina: any) => pagina.idProceso === idProcesoEliminar);
 
     for (let i = 0; i < marcoMPAEliminar.length; i++) {
       let indice = Number(marcoMPAEliminar[i].numeroMarco) - 1;
@@ -84,8 +84,10 @@ export class ReemplazoFIFOComponent {
     }
 
 
+    console.log("Eliminar Memoria Secundaria "+ paginasMSEliminar);
+
     for (let i = 0; i < paginasMSEliminar.length; i++) {
-      let indice = Number(paginasMSEliminar[i].numeroPagina) - 1;
+      let indice = Number(paginasMSEliminar[i].numeroAlmacenamiento) - 1;
       this.paginasMemoriaSecundaria[indice].idProceso = null;
       this.paginasMemoriaSecundaria[indice].nombreProceso = null;
       this.paginasMemoriaSecundaria[indice].numeroPagina = null;

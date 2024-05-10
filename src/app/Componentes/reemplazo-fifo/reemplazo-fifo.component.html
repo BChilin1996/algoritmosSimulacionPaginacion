@@ -42,7 +42,7 @@
                 <div class="form-group row classWithPad">
                     <label for="inputPassword" class="col-sm-6 col-form-label">Tamaño del Proceso [MB]</label>
                     <div class="col-sm-6">
-                        <input type="number" formControlName="tamanioProceso">
+                        <input type="number" formControlName="tamanioProceso" readonly>
                     </div>
                 </div>
                 <button type="button" (click)="agregarProcesoFIFO()" class="btn btn-success classWithPad"
@@ -78,9 +78,11 @@
                             <td>{{item.mS}}</td>
                             <td> <button type="button" (click)="cargarAMemoriaPrincipal(item.id, item.nombreProceso)"
                                     class="btn btn-warning" *ngIf="item.estado != 'Terminado'">Cargar
-                                    MP</button>&nbsp;&nbsp;<button type="button"
-                                    class="btn btn-danger" (click)="terminarProceso(item.id)">Terminar</button>&nbsp;&nbsp;<button type="button"
-                                    class="btn btn-secondary">Bloquear</button></td>
+                                    MP</button>&nbsp;&nbsp;<button type="button" class="btn btn-danger"
+                                    (click)="terminarProceso(item.id)"
+                                    *ngIf="item.estado != 'Terminado'">Terminar</button>&nbsp;&nbsp;<button
+                                    type="button" class="btn btn-secondary"
+                                    *ngIf="item.estado != 'Terminado'">Bloquear</button></td>
                         </tr>
                     </tbody>
                 </table>
