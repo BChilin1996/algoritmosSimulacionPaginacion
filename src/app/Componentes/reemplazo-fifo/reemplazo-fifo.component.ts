@@ -22,7 +22,7 @@ export class ReemplazoFIFOComponent {
   contadorPagina = 0;
   tamanioPaginas = 1024;
   memoriaPrincipalLlena = false;
-  ultimoMarcoFalloDePagina = 1;
+  ordenLlegadaMemoriaPrincipal: any = [];
 
   constructor(
     private formBuilder: FormBuilder
@@ -80,6 +80,7 @@ export class ReemplazoFIFOComponent {
       let indice = Number(marcoMPAEliminar[i].numeroMarco) - 1;
       this.marcosMemoriaPrincipal[indice].idProceso = null;
       this.marcosMemoriaPrincipal[indice].nombreProceso = null;
+      this.marcosMemoriaPrincipal[indice].numeroPagina = null;
     }
 
 
@@ -87,6 +88,7 @@ export class ReemplazoFIFOComponent {
       let indice = Number(paginasMSEliminar[i].numeroPagina) - 1;
       this.paginasMemoriaSecundaria[indice].idProceso = null;
       this.paginasMemoriaSecundaria[indice].nombreProceso = null;
+      this.paginasMemoriaSecundaria[indice].numeroPagina = null;
     }
 
     this.listaProcesos[Number(idProcesoEliminar) - 1].estado = "Terminado";
@@ -96,6 +98,7 @@ export class ReemplazoFIFOComponent {
   }
 
   cargarAMemoriaPrincipal(idProcesoReemplazar: Number, nombreProcesoReemplazar: String) {
+
     const falloPagina = this.marcosMemoriaPrincipal.find((option: any) => option.idProceso === idProcesoReemplazar);
 
     if (falloPagina) {
@@ -104,7 +107,9 @@ export class ReemplazoFIFOComponent {
       alert("Proceso no se encuentra en la Memoria Principal, Fallo de Pagina");
 
       //Aplicar algoritmo FIFO
-      const procesoMarcoLiberar = this.marcosMemoriaPrincipal.find((option: any) => option.numeroMarco === this.ultimoMarcoFalloDePagina);
+      console.log("Proceso Lista "+ this.ordenLlegadaMemoriaPrincipal);
+      let primerProcesoLista = this.ordenLlegadaMemoriaPrincipal[0];
+      const procesoMarcoLiberar = this.marcosMemoriaPrincipal.find((option: any) => option.idProceso === primerProcesoLista);
 
       //Paginas necesarias para el nuevo Proceso
       let datosProcesoReemplazar = this.listaProcesos.find((option: any) => option.id === idProcesoReemplazar);
@@ -116,11 +121,12 @@ export class ReemplazoFIFOComponent {
 
       if (marcosLibres.length >= paginasReemplazar) {
         console.log("Hay Marcos Libres");
-
+        this.ordenLlegadaMemoriaPrincipal.push(idProcesoReemplazar);
         for (let i = 0; i < marcosLibres.length; i++) {
           let indice = Number(marcosLibres[i].numeroMarco) - 1;
           this.marcosMemoriaPrincipal[indice].idProceso = idProcesoReemplazar;
           this.marcosMemoriaPrincipal[indice].nombreProceso = nombreProcesoReemplazar;
+          this.marcosMemoriaPrincipal[indice].numeroPagina = i;
         }
 
         //Liberar los espacios de Memoria Secundaria
@@ -135,7 +141,7 @@ export class ReemplazoFIFOComponent {
 
       } else {
         console.log("No hay marcos libres, liberar memoria principal");
-
+        this.ordenLlegadaMemoriaPrincipal.push(idProcesoReemplazar);
         //Liberar los Espacios de Memoria Principal
         let marcoMPALiberar = this.marcosMemoriaPrincipal.filter((marco: any) => marco.idProceso === procesoMarcoLiberar.idProceso);
         let procesoTrasladarMemoriaSecundaria = marcoMPALiberar[0].idProceso;
@@ -144,7 +150,6 @@ export class ReemplazoFIFOComponent {
           let indice = Number(marcoMPALiberar[i].numeroMarco) - 1;
           this.marcosMemoriaPrincipal[indice].idProceso = idProcesoReemplazar;
           this.marcosMemoriaPrincipal[indice].nombreProceso = nombreProcesoReemplazar;
-          this.ultimoMarcoFalloDePagina = marcoMPALiberar[i].numeroMarco + 1;
         }
 
         //Liberar los espacios de Memoria Secundaria
@@ -186,6 +191,8 @@ export class ReemplazoFIFOComponent {
         this.listaProcesos[Number(idProcesoReemplazar) - 1].mP = cantidadPaginasAsignados;
 
       }
+
+      this.ordenLlegadaMemoriaPrincipal.shift();
 
     }
 
@@ -247,6 +254,9 @@ export class ReemplazoFIFOComponent {
           }
 
         }
+
+        this.ordenLlegadaMemoriaPrincipal.push(idProceso);
+
       }
 
       var cantidadPaginasAsignados = 0;
