@@ -46,9 +46,10 @@ export class ReemplazoFIFOComponent {
       this.cantidadMarcos = this.configuracionSistemaForm.controls['tamanioMemoriaPrincipal'].value / this.configuracionSistemaForm.controls['tamanioPaginas'].value
       this.cantidadPaginas = this.configuracionSistemaForm.controls['tamanioMemoriaSecundaria'].value / this.configuracionSistemaForm.controls['tamanioPaginas'].value
       this.tamanioPaginas = this.configuracionSistemaForm.controls['tamanioPaginas'].value;
+
       for (let i = 1; i < Number(this.cantidadMarcos) + 1; i++) {
         this.marcosMemoriaPrincipal.push({
-          "direccionFisica": i.toString(32),
+          "direccionFisica": "0x" + (i * this.configuracionSistemaForm.controls['tamanioPaginas'].value).toString(16),
           "numeroMarco": i,
           "idProceso": null,
           "nombreProceso": null,
@@ -97,6 +98,8 @@ export class ReemplazoFIFOComponent {
 
       if (marcosLibresCount < numeroPaginas) {
         this.memoriaPrincipalLlena = true
+      } else{
+        this.memoriaPrincipalLlena = false
       }
 
       if (this.memoriaPrincipalLlena === false) {
@@ -115,7 +118,6 @@ export class ReemplazoFIFOComponent {
 
         }
       }
-
 
       var cantidadPaginasAsignados = 0;
 
