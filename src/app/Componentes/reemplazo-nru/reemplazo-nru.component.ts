@@ -163,7 +163,7 @@ export class ReemplazoNRUComponent {
       //Aplicar algoritmo FIFO
       let procesoMasAntiguoReemplazar = this.marcosMemoriaPrincipal.reduce((previous: any, current: any) => {
         return current.tiempoOcupadoProceso > previous.tiempoOcupadoProceso ? current : previous;
-      });;
+      });
 
       const procesoMarcoLiberar = this.marcosMemoriaPrincipal.find((option: any) => option.idProceso === procesoMasAntiguoReemplazar.idProceso);
 
